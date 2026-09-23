@@ -1,6 +1,13 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useRouter } from "expo-router";
 
 export default function Profile() {
+  const router = useRouter();
+
+  function handleAppointmentCreate() {
+    router.push("/schedule");
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.user}>
@@ -17,7 +24,11 @@ export default function Profile() {
           <Text style={styles.message}>Hoje é dia de vitória</Text>
         </View>
       </View>
-      <TouchableOpacity style={styles.addButton} activeOpacity={0.7}>
+      <TouchableOpacity 
+        style={styles.addButton} 
+        activeOpacity={0.7}
+        onPress={handleAppointmentCreate}
+      >
         <Text style={styles.addIcon}>+</Text>
       </TouchableOpacity>
     </View>

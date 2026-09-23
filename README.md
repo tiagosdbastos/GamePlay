@@ -1,56 +1,53 @@
-# Welcome to your Expo app 👋
+# GamePlay - NLW Together (Clone) 🎮
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicativo mobile construído com **React Native** e **Expo** com foco em agendamento de partidas e conexão entre jogadores. Este projeto foi desenvolvido como escopo de avaliação acadêmica/escolar, reproduzindo fielmente um protótipo de alta fidelidade do Figma.
 
-## Get started
+---
 
-1. Install dependencies
+## 📱 Telas Desenvolvidas (Escopo da Entrega)
+1. **Login:** Ponto de entrada com Layout em Flexbox relativo, garantindo responsividade de telas.
+2. **Home:** Tela principal listando agendamentos, utilizando `FlatList` para alta performance e `ListHeader` modularizado.
+3. **Detalhes do Servidor:** Tela de visualização de jogadores, com uso de `ImageBackground` nativo e reutilização do `Header`.
+4. **Agendar Servidor:** Formulário de marcação, aplicando controle de estado (`useState`) para seleção de categorias e `KeyboardAvoidingView` para acessibilidade de teclado.
 
+---
+
+## 🤖 Uso de Inteligência Artificial e Papéis
+
+De acordo com as diretrizes da avaliação, a Inteligência Artificial (Google Antigravity/Gemini) foi utilizada de forma intensiva, mas **não autônoma**. A IA assumiu o papel de "Arquiteto de Software Sênior" e Mentor Técnico (Pair Programming).
+
+### O Papel do Desenvolvedor (Tiago Bastos):
+- **Setup e Infraestrutura:** Resolução de bloqueios de rede da faculdade conectando o Expo via cabo USB e ADB Localhost manualmente.
+- **Design e Estrutura Inicial:** Construção da tela de Login, layout inicial do componente Profile e estilização base de UI.
+- **Orquestração e Decisão Arquitetural:** A IA era proibida de injetar códigos sem aprovação prévia. Eu gerava as demandas (Prompt Engineering), exigia "Planos Arquiteturais", revisava os códigos sugeridos e então tomava a decisão de aprovar, modificar ou descartar o código.
+- **Debugging:** Identificação e resolução de problemas técnicos específicos do React Native, como o crash do Metro Bundler ao tentar resolver caminhos dinâmicos dentro do `require()` de imagens.
+
+### O Papel da Inteligência Artificial:
+- **Planejamento:** Todos os "Blueprints" de código gerados pela IA antes da execução estão registrados e disponíveis na pasta `/iaUsage`.
+- **Refatoração Estrutural (Flexbox):** Ensino socrático e aplicação de técnicas avançadas de Flexbox (ex: uso do `space-between` no Header e `justify-content: flex-end` para ancorar textos sobre imagens).
+- **Otimização:** Sugestões aplicadas para trocar componentes básicos por versões de alta performance (ex: Troca de `ScrollView` e `.map` por `<FlatList>` para garantir *Lazy Loading*).
+- **Auditoria:** Revisão do código para checar vazamento de memória e boas práticas do `Expo Router`.
+
+---
+
+## 🚀 Tecnologias Utilizadas
+- **React Native** (Framework principal)
+- **Expo** (Toolchain)
+- **Expo Router** (Navegação baseada em arquivos - *File-based routing*)
+- **TypeScript** (Tipagem forte)
+
+## 💻 Como Rodar o Projeto
+
+1. Clone o repositório.
+2. Instale as dependências:
    ```bash
    npm install
    ```
-
-2. Start the app
-
+3. Inicie o servidor do Expo:
    ```bash
    npx expo start
    ```
+4. Abra o aplicativo lendo o QR Code pelo aplicativo `Expo Go` no seu celular ou utilize um emulador (Android Studio/XCode).
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+*Projeto desenvolvido por Tiago Bastos.*

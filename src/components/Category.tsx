@@ -1,9 +1,13 @@
-import { Image, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface CategoryProps {
+  //...
+
   title: string;
   icon: any;
   checked?: boolean; // Propriedade opcional, padrão é false
+  hasCheckBox?: boolean;
+  onPress?: () => void;
 }
 
 // Recebemos o title, uma cor provisória e se ele está "marcado" (checked)
@@ -11,12 +15,23 @@ export default function Category({
   title,
   icon,
   checked = false,
+  hasCheckBox = false,
+  onPress,
 }: CategoryProps) {
   return (
     <TouchableOpacity
       style={[styles.container, checked ? styles.checked : styles.unchecked]}
       activeOpacity={0.7}
+      onPress={onPress}
     >
+      {hasCheckBox && (
+        <View
+          style={[
+            styles.check,
+            checked ? styles.checkedBox : styles.uncheckedBox,
+          ]}
+        />
+      )}
       <Image source={icon} style={styles.iconPlaceholder} />
       <Text style={styles.title}>{title}</Text>
     </TouchableOpacity>
@@ -52,5 +67,21 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 15,
     fontWeight: "bold",
+  },
+  check: {
+    width: 12,
+    height: 12,
+    borderRadius: 3,
+    position: "absolute",
+    top: 10,
+    right: 10,
+  },
+  checkedBox: {
+    backgroundColor: "#E51C44",
+  },
+  uncheckedBox: {
+    backgroundColor: "#1D2766",
+    borderColor: "#0D133D",
+    borderWidth: 1,
   },
 });

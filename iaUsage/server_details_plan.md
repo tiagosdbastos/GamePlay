@@ -1,49 +1,181 @@
 ## [Goal Description]
-A próxima tela do fluxo é **Detalhes do Servidor**. Este plano detalha a arquitetura dessa tela com base no arquivo `refs/DetalhesServidor.png`. O foco aqui será a **reusabilidade de componentes**, o que é um ponto altíssimo para a sua avaliação.
+Este documento fornece o "blueprint" (projeto detalhado) de código para a construção da tela **Detalhes do Servidor**. Ao invés de uma visão geral, aqui detalhamos as props, as tags exatas e as regras de Flexbox necessárias para cada componente, servindo como guia prático para a digitação manual.
 
 ## User Review Required
 > [!IMPORTANT]
-> O professor verá que você não copiou e colou código repetido. Nós vamos criar componentes genéricos que servirão tanto para esta tela quanto para a próxima (Agendar). Revise a estrutura antes de codar.
+> A tela será composta por 3 novos componentes reaproveitáveis (`Header`, `Member`, `Button`) e o arquivo principal da tela (`details.tsx`). Siga a ordem proposta abaixo para garantir que o layout não quebre.
 
-## Proposed Changes / Estrutura da Tela
+---
 
-Olhando para o design do Figma, a tela se divide em 5 blocos. Vamos planejar cada um:
+## Proposed Changes (Código Detalhado)
 
-### 1. O Cabeçalho (Header)
-Temos um botão de voltar na esquerda, um título "Detalhes" no centro, e um ícone de compartilhar na direita.
+### 1. O Componente de Navegação Superior
+Este componente ficará colado no topo da tela.
+
 #### [NEW] `src/components/Header.tsx`
-**Arquitetura:** Esse cabeçalho vai se repetir na tela "Agendar" (apenas sem o botão de compartilhar). Portanto, vamos extraí-lo para um componente.
-**Props:** `{ title: string; action?: ReactNode }` (o `action` é opcional, para colocarmos o ícone de compartilhar).
-**Flexbox:** `flexDirection: 'row'`, `justifyContent: 'space-between'`, `alignItems: 'center'`.
+**O que digitar:**
+```tsx
+import { View, Text, StyleSheet } from 'react-native';
+import { ReactNode } from 'react';
+// (Opcional) importar icones como Feather do @expo/vector-icons
 
-### 2. O Banner Principal (ImageBackground)
-A imagem do jogo (ex: League of Legends) ocupa o fundo, e os textos ficam sobrepostos nela.
-#### [NEW] Componente Inline na Tela `details.tsx`
-- Vamos usar o componente nativo `<ImageBackground>` do React Native.
-- Dentro dele, colocaremos os textos (Título e Descrição) ancorados na parte de baixo usando `justifyContent: 'flex-end'`.
-- *Argumento de Defesa:* "Utilizei o `<ImageBackground>` porque ele atua como uma `<View>`, permitindo colocar elementos filhos (textos) sobre a imagem sem precisar usar z-index complexo ou posicionamento absoluto."
+interface HeaderProps {
+  title: string;
+  action?: ReactNode; // A interrogação indica que é opcional (nem toda tela tem o icone de compartilhar)
+}
 
-### 3. O Título da Lista (Reuso!)
-"Jogadores" na esquerda, "Total 3" na direita.
-#### [MODIFY] Componente Existente
-Vamos apenas reutilizar o componente que já fizemos!
-`<ListHeader title="Jogadores" subtitle="Total 3" />`
+export default function Header({ title, action }: HeaderProps) {
+  return (
+    <View style={styles.container}>
+      {/* Botão de Voltar */}
+      <View style={styles.backButton}>
+         <Text style={{color: 'white'}}>&lt;-</Text> 
+      </View>
 
-### 4. A Lista de Jogadores (Member)
-Cada item tem um Avatar na esquerda, Nome, e Status (bolinha verde ou vermelha + texto).
+      {/* Título Centralizado */}
+      <Text style={styles.title}>{title}</Text>
+
+      {/* Ação Dinâmica (Ícone de compartilhar, se existir) */}
+      <View style={styles.action}>
+        {action ? action : <View style={{ width: 24 }} />} 
+        {/* O view vazio garante que o título fique perfeitamente no centro devido ao space-between */}
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    height: 104,
+    flexDirection: 'row',
+    justifyContent: 'space-between', // Alinha as 3 partes nas extremidades e meio
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    backgroundColor: '#1D2766', // Cor do header do Figma
+  },
+  // ... adicione tamanhos e fontes para title e botões
+});
+```
+*Argumento de Defesa:* "O componente Header foi construído para receber um `ReactNode` opcional chamado `action`. Isso permite que na tela de Detalhes ele receba o botão de Compartilhar, mas na tela de Agendar ele fique vazio, sem quebrar o alinhamento central do título, graças ao Flexbox."
+
+---
+
+### 2. O Componente de Jogador (Membro)
+Este é o item da lista que aparece na parte de baixo da tela.
+
 #### [NEW] `src/components/Member.tsx`
-**Arquitetura:** Muito parecido com o `Appointment`, mas mais simples. 
-- Um componente que recebe as props do jogador.
-- Se o status for "online", a bolinha é verde (`#32BD50`), se for "offline", é vermelha (`#E51C44`).
-- Listaremos os membros usando outra `<FlatList>` (novamente o argumento da performance).
+**O que digitar:**
+```tsx
+import { View, Text, Image, StyleSheet } from 'react-native';
 
-### 5. O Botão Fixo (Footer)
-O botão "Entrar na partida" do Discord colado na parte de baixo.
-#### [MODIFY] Tela `details.tsx`
-- Basta colocar o componente do Botão após a `<FlatList>`.
-- Dica: Para o botão não ficar "esmagado" na borda inferior do celular, precisaremos colocar um espaçamento no fundo ou usar o `SafeAreaView` com cuidado.
+export type MemberProps = {
+  id: string;
+  username: string;
+  avatarUrl: string;
+  status: 'online' | 'offline'; // Tipagem restrita!
+}
+
+export default function Member({ data }: { data: MemberProps }) {
+  const isOnline = data.status === 'online';
+
+  return (
+    <View style={styles.container}>
+      {/* Avatar circular (mesma lógica do Profile) */}
+      <Image source={{ uri: data.avatarUrl }} style={styles.avatar} />
+
+      <View>
+        <Text style={styles.title}>{data.username}</Text>
+        
+        {/* Bloco de Status com a "Bolinha" dinâmica */}
+        <View style={styles.statusContainer}>
+          <View style={[
+            styles.bulletStatus, 
+            { backgroundColor: isOnline ? '#32BD50' : '#E51C44' }
+          ]} />
+          <Text style={styles.statusText}>
+            {isOnline ? 'Disponível' : 'Ocupado'}
+          </Text>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 24, paddingVertical: 12 },
+  avatar: { width: 48, height: 48, borderRadius: 8, marginRight: 20 },
+  statusContainer: { flexDirection: 'row', alignItems: 'center' },
+  bulletStatus: { width: 8, height: 8, borderRadius: 4, marginRight: 9 }, // O segredo da bolinha
+  // ... adicione cores e fontes de texto
+});
+```
+
+---
+
+### 3. A Tela Principal de Detalhes
+Aqui nós juntamos tudo. Vamos usar o `<ImageBackground>` nativo do React Native para o banner.
+
+#### [NEW] `src/app/details.tsx`
+**O que digitar:**
+```tsx
+import { View, ImageBackground, Text, FlatList, StyleSheet } from 'react-native';
+import Header from '../components/Header';
+import ListHeader from '../components/ListHeader';
+import Member from '../components/Member';
+
+export default function Details() {
+  const members = [
+    { id: '1', username: 'Tiago', avatarUrl: 'https://github.com/tiagosdbastos.png', status: 'online' },
+    { id: '2', username: 'Diego', avatarUrl: 'https://github.com/diego3g.png', status: 'offline' }
+  ];
+
+  return (
+    <View style={styles.container}>
+      {/* 1. Nosso Header Customizado */}
+      <Header title="Detalhes" action={<Text style={{color: 'red'}}>Share</Text>} />
+
+      {/* 2. Banner Principal com Background */}
+      <ImageBackground 
+        source={require('../../assets/home/lol.png')} // Substitua pela imagem correta de banner
+        style={styles.banner}
+      >
+        <View style={styles.bannerContent}>
+          <Text style={styles.title}>Lendários</Text>
+          <Text style={styles.subtitle}>É hoje que vamos chegar ao challenger...</Text>
+        </View>
+      </ImageBackground>
+
+      {/* 3. Reaproveitamento do ListHeader */}
+      <ListHeader title="Jogadores" subtitle="Total 2" />
+
+      {/* 4. Lista Dinâmica e Performativa */}
+      <FlatList 
+        data={members}
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => <Member data={item} />}
+      />
+
+      {/* 5. Footer (Opcional extrair pra componente Button) */}
+      <View style={styles.footer}>
+         <Text>Entrar na Partida</Text>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#0D133D' },
+  banner: { width: '100%', height: 234 },
+  bannerContent: { 
+    flex: 1, 
+    justifyContent: 'flex-end', // O Segredo: Joga os textos para a base da imagem
+    paddingHorizontal: 24, 
+    paddingBottom: 30 
+  },
+  // ...
+});
+```
 
 ## Verification Plan
-### Manual Verification
-**Argumento de Defesa Geral:**
-"Professor, a tela de Detalhes do Servidor é a prova da componentização do projeto. Ao invés de reescrever o cabeçalho da lista de jogadores, reutilizei o `<ListHeader>` da Home. Além disso, isolei o topo da tela em um componente `<Header>` reaproveitável, que também será usado na tela de Agendamento, garantindo escalabilidade no código."
+Este plano fornece blocos de código com escopo reduzido para facilitar a digestão lógica. Crie os arquivos na ordem (`Header`, depois `Member`, depois `details.tsx`) para validar cada pedaço no simulador progressivamente.

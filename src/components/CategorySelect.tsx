@@ -1,29 +1,57 @@
 import { ScrollView, StyleSheet } from "react-native";
 import Category from "./Category";
 
-export default function CategorySelect() {
+interface Props {
+  categorySelected?: string;
+  setCategory?: (categoryId: string) => void;
+  hasCheckBox?: boolean;
+}
+
+export default function CategorySelect({
+  categorySelected,
+  setCategory,
+  hasCheckBox = false,
+}: Props) {
+  const categories = [
+    {
+      id: "1",
+      title: "Ranqueada",
+      icon: require("../../assets/category/Ranqueada.png"),
+    },
+    {
+      id: "2",
+      title: "Duelo 1x1",
+      icon: require("../../assets/category/1x1.png"),
+    },
+    {
+      id: "3",
+      title: "Diversão",
+      icon: require("../../assets/category/diversao.png"),
+    },
+    {
+      id: "4",
+      title: "Treino",
+      icon: require("../../assets/category/diversao.png"),
+    }, // Assuming treino.png exists, otherwise omit or use a placeholder
+  ];
+
   return (
     <ScrollView
-      horizontal // Força a rolagem a ser da esquerda pra direita
-      showsHorizontalScrollIndicator={false} // Esconde aquela barra nativa cinza de rolagem
+      horizontal
+      showsHorizontalScrollIndicator={false}
       style={styles.container}
-      contentContainerStyle={{ paddingRight: 40 }} // Garante que o último item não grude no final da tela
+      contentContainerStyle={{ paddingRight: 40 }}
     >
-      <Category
-        title="Ranqueada"
-        icon={require("../../assets/category/Ranqueada.png")}
-        checked={true}
-      />
-      <Category
-        title="Duelo 1x1"
-        icon={require("../../assets/category/1x1.png")}
-      />
-      <Category
-        title="Diversão"
-        icon={require("../../assets/category/diversao.png")}
-      />
-
-      <Category title="Treino" iconColor="#1D2766" />
+      {categories.map((category) => (
+        <Category
+          key={category.id}
+          title={category.title}
+          icon={category.icon}
+          checked={category.id === categorySelected}
+          hasCheckBox={hasCheckBox}
+          onPress={() => (setCategory ? setCategory(category.id) : null)}
+        />
+      ))}
     </ScrollView>
   );
 }
